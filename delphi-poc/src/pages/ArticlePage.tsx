@@ -35,12 +35,8 @@ export default function ArticlePage() {
   const article = articles.find((a) => a.id === (id ?? ''))
   
   const [showPopup, setShowPopup] = useState(false)
-  const [virtualElement, setVirtualElement] = useState<any>(null)
 
   const { refs, floatingStyles } = useFloating({
-    elements: {
-      reference: virtualElement,
-    },
     placement: 'top',
     middleware: [offset(10), flip(), shift({ padding: 8 })],
   })
@@ -61,7 +57,8 @@ export default function ArticlePage() {
       const range = selection!.getRangeAt(0)
       const rect = range.getBoundingClientRect()
       
-      setVirtualElement({
+      // Use refs.setPositionReference for virtual element
+      refs.setPositionReference({
         getBoundingClientRect: () => rect,
       })
       setShowPopup(true)
@@ -83,7 +80,7 @@ export default function ArticlePage() {
         </div>
       </div>
       
-      {showPopup && virtualElement && (
+      {showPopup && (
         <div
           ref={refs.setFloating}
           style={floatingStyles}

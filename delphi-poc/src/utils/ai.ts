@@ -1,9 +1,16 @@
 interface CallAgentOptions {
   signal?: AbortSignal
+  action?: string
+}
+
+const actionResponses: Record<string, string> = {
+  explain: "This is an explanation of the selected text. It provides detailed context and clarification.",
+  rephrase: "This is a rephrase of the selected text. The meaning is preserved but expressed differently.",
+  cite: "This is a citation for the selected text. [Author, Year]. Available at: https://example.com"
 }
 
 export async function callAgent(options: CallAgentOptions = {}): Promise<string> {
-  const { signal } = options
+  const { signal, action = 'explain' } = options
 
   try {
     // Create a 3-second delay promise
@@ -31,8 +38,8 @@ export async function callAgent(options: CallAgentOptions = {}): Promise<string>
       abortPromise,
     ])
 
-    // Return fake AI response
-    return "This is an explanation."
+    // Return fake AI response based on action
+    return actionResponses[action.toLowerCase()] || actionResponses.explain
     
   } catch (error) {
     // Re-throw abort errors so the component knows it was canceled
