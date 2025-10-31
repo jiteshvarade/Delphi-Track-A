@@ -6,7 +6,7 @@ interface SelectionPopupProps {
   onClose?: () => void
 }
 
-export default function SelectionPopup({ onClose }: SelectionPopupProps) {
+export default function SelectionPopup({ onClose: _onClose }: SelectionPopupProps) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<string | null>(null)
   const [canceled, setCanceled] = useState(false)
