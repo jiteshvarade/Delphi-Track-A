@@ -21,7 +21,7 @@ export default function ScrollToTopButton() {
     <button
       onClick={handleClick}
       aria-label="Scroll to top"
-      className={`fixed bottom-8 right-8 p-3 bg-indigo-600 text-white rounded-full shadow-lg transition-opacity hover:bg-indigo-700 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+      className={`fixed bottom-6 right-6 md:bottom-8 md:right-8 p-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 transition-all hover:shadow-xl hover:scale-110 hover:bg-zinc-50 dark:hover:bg-zinc-700 z-50 ${visible ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
     >
       {/* Up Arrow icon */}
       <svg

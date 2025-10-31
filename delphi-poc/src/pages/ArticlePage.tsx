@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useArticles } from '../hooks/useArticles'
 import { useHeadings } from '../hooks/useHeadings'
 import ReadingTrail from '../components/ReadingTrail'
+import MobileTableOfContents from '../components/MobileTableOfContents'
 import SelectionPopup from '../components/SelectionPopup'
 
 function slugify(text: string): string {
@@ -30,6 +31,7 @@ function addIdsToHeadings(content: string): string {
 
 export default function ArticlePage() {
   const { id } = useParams<{ id: string }>()
+  const navigate = useNavigate()
   const articles = useArticles()
   const article = articles.find((a) => a.id === (id ?? ''))
   
@@ -76,6 +78,28 @@ export default function ArticlePage() {
 
   return (
     <div className="max-w-6xl mx-auto p-4 relative" onMouseUp={handleMouseUp} onTouchEnd={handleMouseUp}>
+      {/* Back Button */}
+      <button
+        onClick={() => navigate('/')}
+        className="mb-6 inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-zinc-700 dark:text-zinc-200 bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-lg hover:bg-zinc-50 dark:hover:bg-zinc-700 hover:shadow-md transition-all"
+        aria-label="Go back to articles"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="16"
+          height="16"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="15 18 9 12 15 6"></polyline>
+        </svg>
+        Back to Articles
+      </button>
+
       {headings.length > 2 ? (
         // Two-column layout with sidebar (desktop only, single column on mobile)
         <div className="md:grid md:grid-cols-4 gap-8 mt-8 mb-[75vh]">
@@ -111,6 +135,9 @@ export default function ArticlePage() {
           }} 
         />
       )}
+      
+      {/* Mobile Table of Contents - Only shown when there are enough headings */}
+      {headings.length > 2 && <MobileTableOfContents headings={headings} />}
     </div>
   )
 }
