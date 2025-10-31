@@ -101,17 +101,18 @@ export default function ArticlePage() {
       </button>
 
       {headings.length > 2 ? (
-        // Two-column layout with sidebar (desktop only, single column on mobile)
-        <div className="md:grid md:grid-cols-4 gap-8 mt-8 mb-[75vh]">
+        // Two-column layout with sidebar (laptops and up, including MacBooks)
+        // Reading Trail on left, Article on right (like Google Docs)
+        <div className="lg:grid lg:grid-cols-[220px_1fr] xl:grid-cols-[260px_1fr] gap-6 lg:gap-8 mt-8 mb-[75vh]">
+          <div className="hidden lg:block lg:sticky top-8 z-10">
+            <ReadingTrail headings={headings} />
+          </div>
           <article
             ref={articleRef}
-            className="prose lg:prose-xl prose-zinc dark:prose-invert md:col-span-3 [-webkit-touch-callout:none]"
+            className="prose lg:prose-lg xl:prose-xl prose-zinc dark:prose-invert [-webkit-touch-callout:none] max-w-none"
             dangerouslySetInnerHTML={{ __html: fullArticleHtml }}
             onContextMenu={(e) => e.preventDefault()}
           />
-          <div className="hidden md:block md:col-span-1 md:sticky top-8 z-10">
-            <ReadingTrail headings={headings} />
-          </div>
         </div>
       ) : (
         // Single-column centered layout

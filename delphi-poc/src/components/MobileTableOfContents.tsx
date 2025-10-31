@@ -14,10 +14,10 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
 
   return (
     <>
-      {/* Floating Button - Only visible on mobile when there are headings */}
+      {/* Floating Button - Only visible when sidebar is hidden */}
       <button
         onClick={() => setIsOpen(true)}
-        className="md:hidden fixed bottom-6 left-6 p-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:shadow-xl hover:scale-110 transition-all z-50"
+        className="lg:hidden fixed bottom-6 left-6 p-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:shadow-xl hover:scale-110 transition-all z-50"
         aria-label="Open table of contents"
       >
         <svg
@@ -40,7 +40,7 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
       {/* Backdrop */}
       {isOpen && (
         <div
-          className="md:hidden fixed inset-0 bg-black/50 z-[60] transition-opacity"
+          className="lg:hidden fixed inset-0 bg-black/50 z-[60] transition-opacity"
           onClick={() => setIsOpen(false)}
           aria-hidden="true"
         />
@@ -48,14 +48,14 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
 
       {/* Slide-in Drawer */}
       <div
-        className={`md:hidden fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-zinc-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-out ${
+        className={`lg:hidden fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-zinc-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-700">
           <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
-            Table of Contents
+            In this article
           </h2>
           <button
             onClick={() => setIsOpen(false)}
