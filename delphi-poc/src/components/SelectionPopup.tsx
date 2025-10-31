@@ -120,6 +120,11 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
         <div className="animate-spin h-4 w-4 border-2 border-zinc-700 dark:border-zinc-200 border-t-transparent rounded-full"></div>
         <button
           onClick={handleCancel}
+          onTouchEnd={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleCancel()
+          }}
           className="px-3 py-1 text-sm text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
         >
           Cancel
@@ -145,6 +150,11 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
             e.stopPropagation()
             handleAction('explain')
           }}
+          onTouchEnd={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('explain')
+          }}
           className="p-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-md transition-colors"
         >
           Explain
@@ -154,6 +164,11 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
             e.stopPropagation()
             handleAction('rephrase')
           }}
+          onTouchEnd={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
+            handleAction('rephrase')
+          }}
           className="p-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-md transition-colors"
         >
           Rephrase
@@ -161,6 +176,11 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
         <button
           onClick={(e) => {
             e.stopPropagation()
+            handleAction('cite')
+          }}
+          onTouchEnd={(e) => {
+            e.stopPropagation()
+            e.preventDefault()
             handleAction('cite')
           }}
           className="p-2 text-sm text-zinc-700 dark:text-zinc-200 hover:bg-zinc-100 dark:hover:bg-zinc-700 rounded-md transition-colors"
