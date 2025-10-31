@@ -11,7 +11,8 @@
     "test": "vitest",
     "test:unit": "vitest",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "self-check": "echo 'Answer 1: [Placeholder]' && echo 'Answer 2: [Placeholder]' && echo 'Answer 3: [Placeholder]'"
   },
   "dependencies": {
     "@floating-ui/react": "^0.27.16",
