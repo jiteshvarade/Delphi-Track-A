@@ -72,7 +72,7 @@ export default function ArticlePage() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 relative" onMouseUp={handleMouseUp}>
+    <div className="max-w-6xl mx-auto p-4 relative" onMouseUp={handleMouseUp} onTouchEnd={handleMouseUp}>
       {headings.length > 2 ? (
         // Two-column layout with sidebar (desktop only, single column on mobile)
         <div className="md:grid md:grid-cols-4 gap-8 mt-8 mb-[75vh]">
