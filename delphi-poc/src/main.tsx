@@ -1,6 +1,7 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import Layout from './components/Layout'
 import { LogProvider } from './context/LogContext'
 import HomePage from './pages/HomePage'
 import ArticlePage from './pages/ArticlePage'
@@ -12,9 +13,11 @@ createRoot(document.getElementById('root')!).render(
     <LogProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/article/:id" element={<ArticlePage />} />
-          <Route path="/logs" element={<LogsPage />} />
+          <Route element={<Layout />}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/article/:id" element={<ArticlePage />} />
+            <Route path="/logs" element={<LogsPage />} />
+          </Route>
         </Routes>
       </BrowserRouter>
     </LogProvider>
