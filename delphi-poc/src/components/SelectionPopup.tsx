@@ -44,7 +44,7 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
   const handleAction = async (action: string) => {
     console.log('🔘 Button clicked! Action:', action)
     const actionName = action.charAt(0).toUpperCase() + action.slice(1)
-    addLog(`User triggered ${actionName}`)
+    addLog(`User triggered ${actionName} on: "${selectedText.slice(0, 50)}${selectedText.length > 50 ? '...' : ''}"`, 'info')
     
     setLoading(true)
     setCanceled(false)
@@ -59,14 +59,14 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
         action: action
       })
       setResult(response)
-      addLog(`${actionName} action succeeded`)
+      addLog(`${actionName} action succeeded`, 'success')
     } catch (error) {
       if (error instanceof DOMException && error.name === 'AbortError') {
         setCanceled(true)
-        addLog(`${actionName} action canceled`)
+        addLog(`${actionName} action canceled by user`, 'warning')
       } else {
         setResult('Error occurred')
-        addLog(`${actionName} action failed`)
+        addLog(`${actionName} action failed: ${error instanceof Error ? error.message : 'Unknown error'}`, 'error')
       }
     } finally {
       setLoading(false)
@@ -137,14 +137,14 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
     <div 
       ref={refs.setFloating}
       style={floatingStyles}
-      className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl p-4 ring-1 ring-zinc-200 dark:ring-zinc-700 z-50 max-w-xs"
+      className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl p-4 ring-1 ring-zinc-200 dark:ring-zinc-700 z-50 max-w-sm"
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
     >
-      <blockquote className="border-l-4 border-indigo-300 dark:border-indigo-600 pl-3 italic text-zinc-600 dark:text-zinc-400 mb-3 text-sm">
+      <blockquote className="border-l-4 border-indigo-300 dark:border-indigo-600 pl-3 pr-2 italic text-zinc-600 dark:text-zinc-400 mb-3 text-sm max-h-32 overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-zinc-300 [&::-webkit-scrollbar-thumb]:dark:bg-zinc-600 [&::-webkit-scrollbar-thumb]:rounded-full">
         {selectedText}
       </blockquote>
-      <div className="flex gap-2">
+      <div className="flex gap-2 flex-shrink-0">
         <button
           onClick={(e) => {
             e.stopPropagation()
