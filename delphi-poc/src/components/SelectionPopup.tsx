@@ -131,7 +131,7 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
     <div 
       ref={refs.setFloating}
       style={floatingStyles}
-      className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl p-4 ring-1 ring-zinc-200 dark:ring-zinc-700 z-50 max-w-sm"
+      className="bg-white dark:bg-zinc-800 rounded-xl shadow-2xl p-4 ring-1 ring-zinc-200 dark:ring-zinc-700 z-50 max-w-xs"
       onMouseDown={(e) => e.stopPropagation()}
       onMouseUp={(e) => e.stopPropagation()}
     >

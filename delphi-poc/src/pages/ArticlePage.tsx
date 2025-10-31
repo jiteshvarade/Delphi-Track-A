@@ -74,14 +74,14 @@ export default function ArticlePage() {
   return (
     <div className="max-w-6xl mx-auto p-4 relative" onMouseUp={handleMouseUp}>
       {headings.length > 2 ? (
-        // Two-column layout with sidebar
-        <div className="grid grid-cols-4 gap-8 mt-8 mb-[75vh]">
+        // Two-column layout with sidebar (desktop only, single column on mobile)
+        <div className="md:grid md:grid-cols-4 gap-8 mt-8 mb-[75vh]">
           <article
             ref={articleRef}
-            className="prose lg:prose-xl prose-zinc dark:prose-invert col-span-3"
+            className="prose lg:prose-xl prose-zinc dark:prose-invert md:col-span-3"
             dangerouslySetInnerHTML={{ __html: fullArticleHtml }}
           />
-          <div className="col-span-1 sticky top-8 z-10">
+          <div className="hidden md:block md:col-span-1 md:sticky top-8 z-10">
             <ReadingTrail headings={headings} />
           </div>
         </div>
