@@ -20,6 +20,7 @@ export default function SelectionPopup({ range, selectedText, onClose: _onClose 
   // Prefer right side, but allow flipping to other sides if no space
   const { refs, floatingStyles } = useFloating({
     placement: 'right-start',
+    strategy: 'fixed', // Use fixed positioning for better mobile scroll handling
     middleware: [
       offset(12), // Slightly more offset for better spacing
       flip({

@@ -61,9 +61,12 @@ export default function ArticlePage() {
     
     // Check if the selection is inside our article
     if (articleRef.current && articleRef.current.contains(range.commonAncestorContainer)) {
-      // SHOW the popup (set range and text)
-      setSelectionRange(range)
-      setSelectedText(text)
+      // Small delay to allow mobile browsers to complete auto-scrolling
+      setTimeout(() => {
+        // SHOW the popup (set range and text)
+        setSelectionRange(range)
+        setSelectedText(text)
+      }, 100)
     } else {
       // HIDE the popup (it's outside the article)
       setSelectionRange(null)
@@ -78,8 +81,9 @@ export default function ArticlePage() {
         <div className="md:grid md:grid-cols-4 gap-8 mt-8 mb-[75vh]">
           <article
             ref={articleRef}
-            className="prose lg:prose-xl prose-zinc dark:prose-invert md:col-span-3"
+            className="prose lg:prose-xl prose-zinc dark:prose-invert md:col-span-3 [-webkit-touch-callout:none]"
             dangerouslySetInnerHTML={{ __html: fullArticleHtml }}
+            onContextMenu={(e) => e.preventDefault()}
           />
           <div className="hidden md:block md:col-span-1 md:sticky top-8 z-10">
             <ReadingTrail headings={headings} />
@@ -90,8 +94,9 @@ export default function ArticlePage() {
         <div className="mt-8">
           <article
             ref={articleRef}
-            className="prose lg:prose-xl prose-zinc dark:prose-invert mx-auto"
+            className="prose lg:prose-xl prose-zinc dark:prose-invert mx-auto [-webkit-touch-callout:none]"
             dangerouslySetInnerHTML={{ __html: fullArticleHtml }}
+            onContextMenu={(e) => e.preventDefault()}
           />
         </div>
       )}
