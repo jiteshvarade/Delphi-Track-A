@@ -1,6 +1,5 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { useFloating, offset, flip, shift } from '@floating-ui/react'
 import { useArticles } from '../hooks/useArticles'
 import { useHeadings } from '../hooks/useHeadings'
 import ReadingTrail from '../components/ReadingTrail'
@@ -34,12 +33,9 @@ export default function ArticlePage() {
   const articles = useArticles()
   const article = articles.find((a) => a.id === (id ?? ''))
   
-  const [showPopup, setShowPopup] = useState(false)
-
-  const { refs, floatingStyles } = useFloating({
-    placement: 'top',
-    middleware: [offset(10), flip(), shift({ padding: 8 })],
-  })
+  const [selectionRange, setSelectionRange] = useState<Range | null>(null)
+  const [selectedText, setSelectedText] = useState<string>('')
+  const articleRef = useRef<HTMLElement>(null)
 
   if (!article) {
     return <div className="max-w-3xl mx-auto p-4">Article not found.</div>
@@ -51,31 +47,39 @@ export default function ArticlePage() {
 
   const handleMouseUp = () => {
     const selection = window.getSelection()
-    const selectedText = selection?.toString().trim()
 
-    if (selectedText && selectedText.length > 0) {
-      const range = selection!.getRangeAt(0)
-      const rect = range.getBoundingClientRect()
-      
-      // Use refs.setPositionReference for virtual element
-      refs.setPositionReference({
-        getBoundingClientRect: () => rect,
-      })
-      setShowPopup(true)
+    // If nothing is selected (just a click)
+    if (!selection || selection.isCollapsed) {
+      // HIDE the popup
+      setSelectionRange(null)
+      setSelectedText('')
+      return
+    }
+
+    const range = selection.getRangeAt(0)
+    const text = selection.toString().trim()
+    
+    // Check if the selection is inside our article
+    if (articleRef.current && articleRef.current.contains(range.commonAncestorContainer)) {
+      // SHOW the popup (set range and text)
+      setSelectionRange(range)
+      setSelectedText(text)
     } else {
-      setShowPopup(false)
+      // HIDE the popup (it's outside the article)
+      setSelectionRange(null)
+      setSelectedText('')
     }
   }
 
   return (
-    <div className="max-w-6xl mx-auto p-4 relative">
+    <div className="max-w-6xl mx-auto p-4 relative" onMouseUp={handleMouseUp}>
       {headings.length > 2 ? (
         // Two-column layout with sidebar
         <div className="grid grid-cols-4 gap-8 mt-8 mb-[75vh]">
           <article
+            ref={articleRef}
             className="prose lg:prose-xl prose-zinc dark:prose-invert col-span-3"
             dangerouslySetInnerHTML={{ __html: fullArticleHtml }}
-            onMouseUp={handleMouseUp}
           />
           <div className="col-span-1 sticky top-8 z-10">
             <ReadingTrail headings={headings} />
@@ -85,21 +89,22 @@ export default function ArticlePage() {
         // Single-column centered layout
         <div className="mt-8">
           <article
+            ref={articleRef}
             className="prose lg:prose-xl prose-zinc dark:prose-invert mx-auto"
             dangerouslySetInnerHTML={{ __html: fullArticleHtml }}
-            onMouseUp={handleMouseUp}
           />
         </div>
       )}
       
-      {showPopup && (
-        <div
-          ref={refs.setFloating}
-          style={floatingStyles}
-          className="z-50"
-        >
-          <SelectionPopup onClose={() => setShowPopup(false)} />
-        </div>
+      {selectionRange && (
+        <SelectionPopup 
+          range={selectionRange}
+          selectedText={selectedText}
+          onClose={() => {
+            setSelectionRange(null)
+            setSelectedText('')
+          }} 
+        />
       )}
     </div>
   )
