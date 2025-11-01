@@ -14,9 +14,11 @@ interface SelectionPopupProps {
   range: Range | null
   selectedText: string
   onClose?: () => void
+  onOpenHighlights?: () => void
+  highlightCount?: number
 }
 
-export default function SelectionPopup({ selectedText, onClose }: SelectionPopupProps) {
+export default function SelectionPopup({ selectedText, onClose, onOpenHighlights, highlightCount = 0 }: SelectionPopupProps) {
   const [loading, setLoading] = useState(false)
   const [result, setResult] = useState<string>('')
   const [streaming, setStreaming] = useState(false)
@@ -240,7 +242,7 @@ export default function SelectionPopup({ selectedText, onClose }: SelectionPopup
         </div>
 
         {/* Action Buttons */}
-        <div className="flex gap-2 p-3 md:p-4 border-b border-gray-200 dark:border-zinc-800">
+        <div className="grid grid-cols-2 md:flex gap-2 p-3 md:p-4 border-b border-gray-200 dark:border-zinc-800">
           <button
             onClick={(e) => {
               e.stopPropagation()
@@ -296,6 +298,26 @@ export default function SelectionPopup({ selectedText, onClose }: SelectionPopup
                 <path strokeLinecap="round" strokeLinejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z" />
               </svg>
               Cite
+            </span>
+          </button>
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              onOpenHighlights?.()
+            }}
+            disabled={loading}
+            className="flex-1 px-3 md:px-4 py-2.5 rounded-lg font-medium text-xs md:text-sm transition-all bg-yellow-100 dark:bg-yellow-900/30 text-yellow-900 dark:text-yellow-100 hover:bg-yellow-200 dark:hover:bg-yellow-900/50 border border-yellow-300 dark:border-yellow-700 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <span className="flex items-center justify-center gap-2 relative">
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+              </svg>
+              <span>Highlight</span>
+              {highlightCount > 0 && (
+                <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 text-white text-[10px] rounded-full flex items-center justify-center">
+                  {highlightCount}
+                </span>
+              )}
             </span>
           </button>
         </div>

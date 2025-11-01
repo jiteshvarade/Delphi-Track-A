@@ -5,6 +5,9 @@ import { useHeadings } from '../hooks/useHeadings'
 import ReadingTrail from '../components/ReadingTrail'
 import MobileTableOfContents from '../components/MobileTableOfContents'
 import SelectionPopup from '../components/SelectionPopup'
+import ArticleSummary from '../components/ArticleSummary'
+import HighlightsPanel from '../components/HighlightsPanel'
+import { highlightsStorage, type Highlight } from '../utils/highlightsStorage'
 
 function slugify(text: string): string {
   return text
@@ -37,12 +40,52 @@ export default function ArticlePage() {
   
   const [selectionRange, setSelectionRange] = useState<Range | null>(null)
   const [selectedText, setSelectedText] = useState<string>('')
+  const [showHighlights, setShowHighlights] = useState(false)
+  const [highlightCount, setHighlightCount] = useState(0)
   const articleRef = useRef<HTMLElement>(null)
 
   // Scroll to top when article loads or changes
   useEffect(() => {
     window.scrollTo(0, 0)
   }, [id])
+
+  // Load highlight count
+  useEffect(() => {
+    if (article) {
+      setHighlightCount(highlightsStorage.getHighlights(article.id).length)
+    }
+  }, [article])
+
+  // Keyboard shortcut: Press 'H' to open highlights with selected text
+  useEffect(() => {
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === 'h' || e.key === 'H') {
+        const selection = window.getSelection()
+        if (selection && !selection.isCollapsed) {
+          e.preventDefault()
+          setShowHighlights(true)
+        }
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyPress)
+    return () => window.removeEventListener('keydown', handleKeyPress)
+  }, [])
+
+  const handleHighlight = (color: Highlight['color'], note: string) => {
+    if (!selectedText || !article) return
+    
+    highlightsStorage.saveHighlight({
+      articleId: article.id,
+      text: selectedText,
+      note,
+      color,
+    })
+    
+    setHighlightCount(highlightsStorage.getHighlights(article.id).length)
+    setSelectedText('')
+    setSelectionRange(null)
+  }
 
   if (!article) {
     return <div className="max-w-3xl mx-auto p-4">Article not found.</div>
@@ -53,9 +96,9 @@ export default function ArticlePage() {
   const headings = useHeadings(article.content)
 
   const handleMouseUp = (e: React.MouseEvent | React.TouchEvent) => {
-    // Don't close popup if clicking inside the SelectionPopup
+    // Don't close popup if clicking inside the SelectionPopup or HighlightsPanel
     const target = e.target as HTMLElement
-    if (target.closest('[data-selection-popup="true"]')) {
+    if (target.closest('[data-selection-popup="true"]') || target.closest('[data-highlights-panel="true"]')) {
       return
     }
 
@@ -63,9 +106,11 @@ export default function ArticlePage() {
 
     // If nothing is selected (just a click)
     if (!selection || selection.isCollapsed) {
-      // HIDE the popup
-      setSelectionRange(null)
-      setSelectedText('')
+      // HIDE the popup (but don't clear selectedText if highlights panel is open)
+      if (!showHighlights) {
+        setSelectionRange(null)
+        setSelectedText('')
+      }
       return
     }
 
@@ -111,6 +156,14 @@ export default function ArticlePage() {
         Back to Articles
       </button>
 
+      {/* Article Summary */}
+      <div className="mt-6 max-w-3xl">
+        <ArticleSummary 
+          articleTitle={article.title}
+          articleContent={article.content}
+        />
+      </div>
+
       {headings.length > 2 ? (
         // Two-column layout with sidebar (laptops and up, including MacBooks)
         // Reading Trail on left, Article on right (like Google Docs)
@@ -144,12 +197,27 @@ export default function ArticlePage() {
           onClose={() => {
             setSelectionRange(null)
             setSelectedText('')
-          }} 
+          }}
+          onOpenHighlights={() => setShowHighlights(true)}
+          highlightCount={highlightCount}
         />
       )}
       
       {/* Mobile Table of Contents - Only shown when there are enough headings */}
       {headings.length > 2 && <MobileTableOfContents headings={headings} />}
+
+      {/* Highlights Panel */}
+      {showHighlights && (
+        <HighlightsPanel
+          articleId={article.id}
+          selectedText={selectedText}
+          onHighlight={handleHighlight}
+          onClose={() => {
+            setShowHighlights(false)
+            setHighlightCount(highlightsStorage.getHighlights(article.id).length)
+          }}
+        />
+      )}
     </div>
   )
 }

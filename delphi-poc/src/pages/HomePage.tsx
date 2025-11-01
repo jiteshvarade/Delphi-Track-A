@@ -1,9 +1,12 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { useArticles } from '../hooks/useArticles'
+import TypewriterText from '../components/TypewriterText'
 
 export default function HomePage() {
   const articles = useArticles()
+  const [showSubheading, setShowSubheading] = useState(false)
+  const [showContent, setShowContent] = useState(false)
 
   // Scroll to top when homepage loads
   useEffect(() => {
@@ -28,20 +31,34 @@ export default function HomePage() {
             </div>
 
             {/* Main Headline */}
-            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white">
-              Read Smarter with
-              <br />
-              <span className="text-gray-500 dark:text-gray-400">AI Assistance</span>
+            <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-gray-900 dark:text-white min-h-[140px] md:min-h-[180px] flex flex-col items-center justify-center gap-2">
+              <TypewriterText 
+                text="Read Smarter with"
+                delay={80}
+                onComplete={() => setShowSubheading(true)}
+              />
+              {showSubheading && (
+                <span className="text-gray-500 dark:text-gray-400">
+                  <TypewriterText 
+                    text="AI Assistance"
+                    delay={80}
+                    onComplete={() => setShowContent(true)}
+                  />
+                </span>
+              )}
             </h1>
 
             {/* Subheadline */}
-            <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed">
-              Enhance your reading with instant explanations, smart rephrasing, 
-              and citation generation—powered by Google Gemini.
-            </p>
+            {showContent && (
+              <p className="text-lg md:text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto leading-relaxed animate-fade-in opacity-0 [animation-delay:200ms]">
+                Enhance your reading with instant explanations, smart rephrasing, 
+                and citation generation—powered by Google Gemini.
+              </p>
+            )}
 
             {/* CTA Buttons */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-4">
+            {showContent && (
+              <div className="flex flex-col sm:flex-row gap-3 justify-center items-center pt-4 animate-fade-in opacity-0 [animation-delay:400ms]">
               <a
                 href="#articles"
                 className="group px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-black rounded-lg font-medium hover:bg-gray-800 dark:hover:bg-gray-100 transition-colors flex items-center gap-2"
@@ -57,10 +74,12 @@ export default function HomePage() {
               >
                 Learn More
               </a>
-            </div>
+              </div>
+            )}
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 max-w-xl mx-auto pt-16 border-t border-gray-200 dark:border-zinc-800 mt-16">
+            {showContent && (
+              <div className="grid grid-cols-3 gap-8 max-w-xl mx-auto pt-16 border-t border-gray-200 dark:border-zinc-800 mt-16 animate-fade-in opacity-0 [animation-delay:600ms]">
               <div className="text-center">
                 <div className="text-3xl font-bold text-gray-900 dark:text-white">100%</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Free</div>
@@ -73,7 +92,8 @@ export default function HomePage() {
                 <div className="text-3xl font-bold text-gray-900 dark:text-white">∞</div>
                 <div className="text-sm text-gray-600 dark:text-gray-400 mt-1">Offline</div>
               </div>
-            </div>
+              </div>
+            )}
           </div>
         </div>
       </section>

@@ -3,6 +3,7 @@
  */
 
 export type AIProvider = 'gemini'
+export type AIAction = 'explain' | 'rephrase' | 'cite' | 'summarize'
 export type AIModel = 'gemini-2.5-flash-preview-05-20'
 
 export interface AIConfig {
