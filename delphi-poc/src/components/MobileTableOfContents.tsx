@@ -17,7 +17,7 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
       {/* Floating Button - Only visible when sidebar is hidden */}
       <button
         onClick={() => setIsOpen(true)}
-        className="lg:hidden fixed bottom-6 left-6 p-3 bg-white dark:bg-zinc-800 text-zinc-700 dark:text-zinc-200 rounded-full shadow-lg border border-zinc-200 dark:border-zinc-700 hover:shadow-xl hover:scale-110 transition-all z-50"
+        className="lg:hidden fixed bottom-6 left-6 p-3 bg-white dark:bg-black text-gray-700 dark:text-gray-200 rounded-full shadow-lg border border-gray-300 dark:border-zinc-700 hover:shadow-xl hover:scale-110 transition-all z-50"
         aria-label="Open table of contents"
       >
         <svg
@@ -48,18 +48,18 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
 
       {/* Slide-in Drawer */}
       <div
-        className={`lg:hidden fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-zinc-900 shadow-2xl z-[70] transform transition-transform duration-300 ease-out ${
+        className={`lg:hidden fixed top-0 left-0 bottom-0 w-80 max-w-[85vw] bg-white dark:bg-black shadow-2xl z-[70] transform transition-transform duration-300 ease-out ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-zinc-200 dark:border-zinc-700">
-          <h2 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">
+        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-zinc-800">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white">
             In this article
           </h2>
           <button
             onClick={() => setIsOpen(false)}
-            className="p-2 text-zinc-500 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors"
+            className="p-2 text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-zinc-900 rounded-lg transition-colors"
             aria-label="Close table of contents"
           >
             <svg
@@ -87,7 +87,7 @@ export default function MobileTableOfContents({ headings }: MobileTableOfContent
                 <a
                   href={`#${heading.id}`}
                   onClick={handleLinkClick}
-                  className="block text-sm text-zinc-600 dark:text-zinc-400 hover:text-indigo-600 dark:hover:text-indigo-400 py-2 transition-colors"
+                  className="block text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white py-2 transition-colors"
                 >
                   {heading.text}
                 </a>

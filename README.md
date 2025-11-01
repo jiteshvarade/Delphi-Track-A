@@ -6,9 +6,11 @@ A modern, elegant reading experience for long-form technical articles with AI-po
 
 Delphi Reader transforms how you consume technical content by providing:
 - **Smart Navigation**: Automatic table of contents with anchor links
-- **AI Assistance**: Select text to explain, rephrase, or cite
-- **Beautiful UI**: Dark mode support with premium typography
+- **AI Assistance**: Explain, rephrase, cite, and summarize with Google Gemini
+- **Highlights & Notes**: Save important passages with color-coded highlights
+- **Beautiful UI**: Vercel-inspired minimal design with dark mode
 - **Activity Logging**: Track your reading and AI interactions
+- **Engaging Animations**: Typewriter effects and smooth transitions
 
 Built with React 19, Vite, TypeScript, and Tailwind CSS.
 
@@ -26,8 +28,18 @@ Built with React 19, Vite, TypeScript, and Tailwind CSS.
 - **Explain**: Get simple explanations of complex terms
 - **Rephrase**: Rewrite selected text for clarity
 - **Cite**: Generate citation-ready references
+- **Summarize**: AI-generated article summaries with key points
 - **Abortable Requests**: Cancel long-running AI operations
-- Floating popup positioned near your text selection
+- Integrated popup with 4 action buttons
+- Powered by Google Gemini 2.5 Flash
+
+### 💾 Highlight & Save
+- Select text and save as color-coded highlights (Yellow/Green/Blue/Pink)
+- Add personal notes to your highlights
+- Edit and delete highlights anytime
+- LocalStorage persistence across sessions
+- View all highlights in a dedicated panel
+- Keyboard shortcut: Press **H** to highlight selected text
 
 ### 🌙 Dark Mode
 - System-aware theme detection
@@ -41,6 +53,22 @@ Built with React 19, Vite, TypeScript, and Tailwind CSS.
 - Dedicated Logs page for reviewing history
 - Timestamped entries for debugging
 
+### 🎨 Modern UI/UX
+- **Vercel-inspired Theme**: Clean black/white/gray minimal design
+- **Typewriter Animation**: Engaging hero section with letter-by-letter text reveal
+- **Responsive Header**: Dropdown navigation with article quick-access menu
+- **Mobile-First**: Fully responsive design with hamburger menu
+- **Smooth Animations**: Fade-in effects and micro-interactions
+- **Sticky Navigation**: Always-accessible header
+
+### 🏠 Enhanced Homepage
+- Hero section with animated typewriter text
+- Feature showcase with 6 key capabilities
+- How It Works section (3-step guide)
+- Statistics display (100% Free, 3 Actions, ∞ Offline)
+- Quick access to all articles
+- Clean call-to-action buttons
+
 ---
 
 ## Tech Stack
@@ -53,7 +81,8 @@ Built with React 19, Vite, TypeScript, and Tailwind CSS.
 | **Tailwind CSS** | Utility-first styling framework |
 | **@tailwindcss/typography** | Beautiful prose styling for articles |
 | **React Router** | Client-side routing |
-| **@floating-ui/react** | Positioning for selection popup |
+| **Marked** | Markdown parsing for AI responses |
+| **Google Gemini** | AI text generation (2.5 Flash) |
 | **Vitest** | Unit testing framework |
 | **Playwright** | End-to-end testing |
 
@@ -170,12 +199,16 @@ delphi-poc/
 │   └── articles/        # Markdown article files
 ├── src/
 │   ├── components/      # React components
+│   │   ├── ArticleSummary.tsx          # AI article summarization
 │   │   ├── DarkModeToggle.tsx
-│   │   ├── Header.tsx
+│   │   ├── Header.tsx                   # Navigation with dropdown
+│   │   ├── HighlightsPanel.tsx         # Highlight management UI
 │   │   ├── Layout.tsx
+│   │   ├── MobileTableOfContents.tsx
 │   │   ├── ReadingTrail.tsx
 │   │   ├── ScrollToTopButton.tsx
-│   │   └── SelectionPopup.tsx
+│   │   ├── SelectionPopup.tsx          # AI actions popup
+│   │   └── TypewriterText.tsx          # Animated text effect
 │   ├── context/         # React Context providers
 │   │   └── LogContext.tsx
 │   ├── hooks/           # Custom React hooks
@@ -185,8 +218,11 @@ delphi-poc/
 │   │   ├── ArticlePage.tsx
 │   │   ├── HomePage.tsx
 │   │   └── LogsPage.tsx
+│   ├── services/        # External services
+│   │   └── aiService.ts                # Gemini AI integration
 │   ├── utils/           # Utility functions
-│   │   └── ai.ts
+│   │   ├── highlightsStorage.ts        # LocalStorage for highlights
+│   │   └── templateFallbacks.ts        # AI-off mode templates
 │   ├── main.tsx         # App entry point
 │   └── index.css        # Global styles
 ├── tests/
@@ -212,16 +248,42 @@ delphi-poc/
 - **Behavior**: Only shown when article has 3+ headings
 
 ### AI Selection Popup
-- **Component**: `SelectionPopup` with Explain/Rephrase/Cite actions
-- **Positioning**: Uses `@floating-ui/react` for smart placement
+- **Component**: `SelectionPopup` with Explain/Rephrase/Cite/Highlight actions
+- **Service**: `aiService.ts` handles Gemini API streaming
 - **Abort Control**: `AbortController` pattern for cancellable requests
-- **State**: Loading, result, and canceled states with transitions
+- **State**: Loading, result, streaming, and canceled states
+- **Mode**: Model ON (Gemini AI) or Model OFF (template fallbacks)
+
+### Article Summary
+- **Component**: `ArticleSummary` - collapsible AI summary generator
+- **API**: Calls Gemini to generate 3-5 key bullet points
+- **Caching**: Summary persists until page reload
+- **UX**: Click header to expand/collapse summary
+
+### Highlight & Save
+- **Component**: `HighlightsPanel` - full-featured highlight manager
+- **Storage**: `highlightsStorage.ts` - LocalStorage CRUD operations
+- **Features**: 4 color options, personal notes, edit/delete
+- **Access**: Click "Highlight" button in SelectionPopup or press **H** key
+- **Persistence**: All highlights saved across browser sessions
+
+### Typewriter Animation
+- **Component**: `TypewriterText` - character-by-character reveal
+- **Usage**: Homepage hero section with cascading animations
+- **Timing**: 80ms per character, callbacks on completion
+- **UX**: Smooth fade-in for subsequent content
+
+### Responsive Navigation
+- **Component**: `Header` with dropdown menu and mobile support
+- **Desktop**: Hover over "Articles" shows dropdown with all articles
+- **Mobile**: Hamburger menu with expandable article list
+- **Sticky**: Header stays fixed at top during scroll
 
 ### Dark Mode
 - **Toggle**: `DarkModeToggle` component in header
 - **Storage**: Preference saved to localStorage as `theme`
 - **Classes**: Tailwind `dark:` variants throughout components
-- **System**: Detects `prefers-color-scheme` on first load
+- **Theme**: Vercel-inspired minimal black/white/gray palette
 
 ### Activity Logs
 - **Context**: `LogContext` provides global `addLog` function
@@ -237,18 +299,34 @@ delphi-poc/
 
 Custom theme in `tailwind.config.ts`:
 - **Fonts**: Inter (sans), Lora (serif)
-- **Colors**: Zinc palette for modern minimalist look
+- **Colors**: Gray/Zinc palette for Vercel-inspired minimal look
 - **Typography**: Extended prose classes for articles
 - **Dark Mode**: Class-based strategy
+- **Animations**: Custom fade-in keyframes for smooth transitions
 
 ### Environment Variables
 
-Currently no environment variables required. AI calls use a mock utility function.
+Create a `.env.local` file in the root directory:
 
-To integrate a real AI backend:
-1. Add API endpoint URL as `VITE_AI_API_URL`
-2. Update `src/utils/ai.ts` with actual fetch logic
-3. Handle authentication tokens if needed
+```env
+VITE_GEMINI_API_KEY=your_gemini_api_key_here
+```
+
+**To get a Gemini API key:**
+1. Visit [Google AI Studio](https://aistudio.google.com/)
+2. Create a new API key
+3. Add it to `.env.local`
+4. Restart the dev server
+
+**Note**: The app works in "Model OFF" mode without an API key, using template-based responses.
+
+---
+
+## Keyboard Shortcuts
+
+| Shortcut | Action |
+|----------|--------|
+| **H** | Highlight selected text (opens highlight panel) |
 
 ---
 
@@ -294,10 +372,42 @@ This project is licensed under the MIT License.
 
 ---
 
+## What's New 🎉
+
+### Latest Updates (v2.0)
+
+**🤖 Real AI Integration**
+- Google Gemini 2.5 Flash integration
+- Streaming responses with live updates
+- Article summarization feature
+- Model ON/OFF toggle for offline mode
+
+**💾 Highlight & Save System**
+- Color-coded highlights (4 colors)
+- Personal notes on highlights
+- LocalStorage persistence
+- Edit and delete functionality
+
+**🎨 UI/UX Improvements**
+- Vercel-inspired minimal theme
+- Typewriter animation on homepage
+- Responsive navigation with article dropdown
+- Smooth fade-in animations
+- Mobile-first responsive design
+
+**📝 Enhanced Features**
+- Article summary generation
+- Improved selection popup with 4 actions
+- Keyboard shortcuts (H for highlight)
+- Sticky header navigation
+- Better dark mode support
+
+---
+
 ## Acknowledgments
 
 - Built with [Vite](https://vite.dev/)
 - Styled with [Tailwind CSS](https://tailwindcss.com/)
 - Typography by [Tailwind Typography](https://tailwindcss.com/docs/typography-plugin)
-- Icons from [Lucide React](https://lucide.dev/)
-- Floating UI by [@floating-ui/react](https://floating-ui.com/)
+- AI powered by [Google Gemini](https://ai.google.dev/)
+- Markdown rendering by [Marked](https://marked.js.org/)
