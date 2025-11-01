@@ -15,7 +15,12 @@
     "self-check": "echo 'Answer 1: [Placeholder]' && echo 'Answer 2: [Placeholder]' && echo 'Answer 3: [Placeholder]'"
   },
   "dependencies": {
+    "@anthropic-ai/sdk": "^0.68.0",
     "@floating-ui/react": "^0.27.16",
+    "@google/generative-ai": "^0.24.1",
+    "ai": "^5.0.86",
+    "marked": "^16.4.1",
+    "openai": "^6.7.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.5"
@@ -37,6 +42,7 @@
     "eslint-plugin-react-refresh": "^0.4.22",
     "globals": "^16.4.0",
     "jsdom": "^27.0.1",
+    "playwright": "^1.56.1",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.18",
     "terser": "^5.44.0",
