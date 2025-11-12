@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { marked } from 'marked'
 import { aiService } from '../services/aiService'
+import { useToast } from '../context/ToastContext'
 
 interface ArticleSummaryProps {
   articleTitle: string
@@ -11,7 +12,7 @@ export default function ArticleSummary({ articleTitle, articleContent }: Article
   const [isOpen, setIsOpen] = useState(false)
   const [summary, setSummary] = useState('')
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
+  const { showToast } = useToast()
 
   const generateSummary = async () => {
     if (summary) {
@@ -20,7 +21,6 @@ export default function ArticleSummary({ articleTitle, articleContent }: Article
     }
 
     setLoading(true)
-    setError('')
     setIsOpen(true)
 
     // Extract plain text from HTML (remove tags for better summarization)
@@ -58,13 +58,13 @@ Provide a brief summary with key takeaways.`
             setLoading(false)
           },
           onError: (err: Error) => {
-            setError(err.message)
+            showToast(err.message, 'error')
             setLoading(false)
           },
         }
       )
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate summary')
+      showToast(err instanceof Error ? err.message : 'Failed to generate summary', 'error')
       setLoading(false)
     }
   }
@@ -106,12 +106,6 @@ Provide a brief summary with key takeaways.`
       {/* Summary Content */}
       {isOpen && (
         <div className="px-4 pb-4 border-t border-gray-200 dark:border-zinc-800">
-          {error && (
-            <div className="mt-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900 rounded-lg">
-              <p className="text-sm text-red-700 dark:text-red-400">{error}</p>
-            </div>
-          )}
-          
           {loading && (
             <div className="mt-4 flex items-center gap-3 p-4 bg-white dark:bg-black rounded-lg border border-gray-200 dark:border-zinc-800">
               <div className="animate-spin h-5 w-5 border-2 border-gray-900 dark:border-white border-t-transparent rounded-full"></div>

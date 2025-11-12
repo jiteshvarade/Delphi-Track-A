@@ -77,8 +77,18 @@ class AIService {
       }
 
       if (!response.ok) {
-        const errorData = await response.text()
-        throw new Error(`Gemini API error (${response.status}): ${errorData}`)
+        // User-friendly error messages based on status code
+        if (response.status === 503) {
+          throw new Error('AI service is temporarily busy. Please toggle "Model OFF" or try again in a moment.')
+        } else if (response.status === 429) {
+          throw new Error('Too many requests. Please wait a moment and try again, or use Model OFF mode.')
+        } else if (response.status === 401 || response.status === 403) {
+          throw new Error('Invalid API key. Please check your Gemini API key in settings.')
+        } else if (response.status === 400) {
+          throw new Error('Invalid request. The selected text may be too long or contain unsupported characters.')
+        } else {
+          throw new Error(`AI service error. Please try Model OFF mode or contact support. (Error ${response.status})`)
+        }
       }
 
       callbacks.onThinking?.('Generating response...')

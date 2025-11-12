@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { marked } from 'marked'
 import { aiService, type AIProvider, type UsageStats } from '../services/aiService'
 import { useLog } from '../context/LogContext'
+import { useToast } from '../context/ToastContext'
 import { generateTemplateExplanation, generateTemplateRephrase, generateTemplateCitation } from '../utils/templateFallbacks'
 
 // Configure marked for better output
@@ -33,6 +34,7 @@ export default function SelectionPopup({ selectedText, onClose, onOpenHighlights
   })
   const provider: AIProvider = 'gemini' // Only Gemini supported
   const { addLog } = useLog()
+  const { showToast } = useToast()
 
   useEffect(() => {
     localStorage.setItem('modelEnabled', modelEnabled.toString())
@@ -132,7 +134,9 @@ export default function SelectionPopup({ selectedText, onClose, onOpenHighlights
               setCanceled(true)
               setResult('') // Clear any partial result
             } else {
-              setResult(`❌ Error: ${error.message}`)
+              // Show toast notification instead of inline error
+              showToast(error.message, 'error')
+              setResult('') // Clear result on error
             }
             addLog(`AI error: ${error.message}`, 'error')
           },
@@ -144,8 +148,10 @@ export default function SelectionPopup({ selectedText, onClose, onOpenHighlights
         setCanceled(true)
         addLog(`${actionName} action canceled by user`, 'warning')
       } else {
-        setResult('Error: ' + (error instanceof Error ? error.message : 'Unknown error'))
-        addLog(`${actionName} action failed`, 'error')
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred'
+        showToast(errorMessage, 'error')
+        setResult('') // Clear result on error
+        addLog(`${actionName} action failed: ${errorMessage}`, 'error')
       }
       setLoading(false)
       setStreaming(false)
